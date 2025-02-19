@@ -12,7 +12,7 @@ function Home() {
           <input type="text" placeholder="ค้นหารายการสินค้า" className="form-control me-2" style={{ width: "300px" }} />
           <button className="btn btn-light me-3">🔍 ค้นหา</button>
           <div className="position-relative">
-            <Link to="/cart" className="btn btn-light">
+            <Link to="CartPage" className="btn btn-light">
               🛒 ตะกร้า ({cart.length})
             </Link>
           </div>

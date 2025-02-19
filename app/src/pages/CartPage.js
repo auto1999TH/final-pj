@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 function CartPage() {
   const [cart, setCart] = useState([
-    { id: 1, name: "PS 5", price: 40000, quantity: 1 },
-    { id: 2, name: "PS 5", price: 40000, quantity: 1 },
-    { id: 3, name: "PS 5", price: 40000, quantity: 1 },
+    { id: 1, name: "PS 5", price: 500, quantity: 1 },
+    { id: 2, name: "PS 5", price: 500, quantity: 1 },
+    { id: 3, name: "PS 5", price: 500, quantity: 1 },
   ]);
 
   const updateQuantity = (id, amount) => {
