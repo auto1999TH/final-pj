@@ -19,8 +19,8 @@ function Home() {
         </div>
       </header>
       <nav className="d-flex justify-content-center mt-3">
-        <Link to="/category/electronics" className="btn btn-light mx-2">อิเล็กทรอนิกส์</Link>
-        <Link to="/category/fashion" className="btn btn-light mx-2">เสื้อผ้าแฟชั่น</Link>
+        <Link to="order-status" className="btn btn-light mx-2">อิเล็กทรอนิกส์</Link>
+        <Link to="Orders" className="btn btn-light mx-2">เสื้อผ้าแฟชั่น</Link>
         <Link to="/category/appliances" className="btn btn-light mx-2">เครื่องใช้ไฟฟ้า</Link>
         <Link to="/category/other" className="btn btn-light mx-2">อื่นๆ</Link>
       </nav>
