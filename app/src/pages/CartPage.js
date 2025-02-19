@@ -50,7 +50,7 @@ function CartPage() {
             ))}
           </tbody>
         </table>
-        <h3>รวมทั้งหมด: ${totalPrice.toLocaleString()}</h3>
+        <h3>รวมทั้งหมด 1: ${totalPrice.toLocaleString()}</h3>
         <Link to="/Orders" className="btn btn-danger">
           Checkout
         </Link>
