@@ -12,9 +12,10 @@ app.use(bodyParser.json());
 const JWT_SECRET = "asdasdjlk90"; // ใช้ค่าที่ต้องการได้เลย
 
 // ✅ อนุญาตให้ React (http://localhost:5173) เรียก API ได้
-app.use(cors({ origin: "http://localhost:5000",methods:"GET,POST,PUT,DELETE",allowedHeaders:"Content-Type,Authorization" }));
+app.use(cors({ origin: "http://localhost:3000",methods:"GET,POST,PUT,DELETE",allowedHeaders:"Content-Type,Authorization" }));
+// axios.post("http://localhost:3000", { fullName, email, password }, { mode: 'cors' });
 
-// Middleware ตรวจสอบ Token
+
 const verifyToken = (req, res, next) => {
     const token = req.headers["authorization"];
     if (!token) return res.status(403).json({ message: "No token provided" });
@@ -26,7 +27,6 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-// 📌 **1. ลงทะเบียนลูกค้า**
 app.post("/register", (req, res) => {
     const { fullName, email, password } = req.body;
     const hashPassword = bcrypt.hashSync(password, 8);
@@ -37,7 +37,6 @@ app.post("/register", (req, res) => {
     });
 });
 
-// 📌 **2. Login**
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
 
@@ -70,7 +69,6 @@ app.post("/login", (req, res) => {
     });
 });
 
-// 📌 **3. ดูรายการสินค้า (GET /products)**
 app.get("/products", verifyToken, (req, res) => {
     db.query("SELECT * FROM Product", (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -78,7 +76,6 @@ app.get("/products", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **4. เพิ่มสินค้า (POST /products)**
 app.post("/products", verifyToken, (req, res) => {
     const { productname, price, stock } = req.body;
 
@@ -88,7 +85,6 @@ app.post("/products", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **5. แก้ไขสินค้า (PUT /products/:id)**
 app.put("/products/:id", verifyToken, (req, res) => {
     const { productname, price, stock } = req.body;
     const { id } = req.params;
@@ -100,7 +96,6 @@ app.put("/products/:id", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **6. ลบสินค้า (DELETE /products/:id)**
 app.delete("/products/:id", verifyToken, (req, res) => {
     const { id } = req.params;
 
@@ -110,7 +105,6 @@ app.delete("/products/:id", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **7. สร้าง Order (POST /orders)**
 app.post("/orders", verifyToken, (req, res) => {
     const { customerID, orderdate, products } = req.body;
 
@@ -127,7 +121,6 @@ app.post("/orders", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **8. ดูรายการ Order (GET /orders)**
 app.get("/orders", verifyToken, (req, res) => {
     db.query(`SELECT o.OrderID, o.OrderDate, c.FullName, p.ProductName, od.Quantity FROM orders o 
               JOIN Customer c ON o.CustomerID = c.CustomerID
@@ -138,7 +131,6 @@ app.get("/orders", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **9. ลบ Order (DELETE /orders/:id)**
 app.delete("/orders/:id", verifyToken, (req, res) => {
     const { id } = req.params;
 
@@ -152,7 +144,6 @@ app.delete("/orders/:id", verifyToken, (req, res) => {
     });
 });
 
-// 📌 **10. ดูรายการผู้ใช้งาน (GET /Customer)**
 app.get("/customers", verifyToken, (req, res) => {
     db.query("SELECT * FROM customer", (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -163,6 +154,6 @@ app.get("/customers", verifyToken, (req, res) => {
 // app.listen(process.env.PORT, () => {
 //     console.log(`Server running on port ${process.env.PORT}`);
 // });
-app.listen(3001, () => {
+app.listen(5000, () => {
     console.log(`Server running on port http://localhost:5000`);
 });
