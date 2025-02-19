@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Orders from "./pages/Orders";
+import OrderStatus from "./pages/OrderStatus"; 
 import { AuthContext } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
 
 function App() {
     const { user, logout } = useContext(AuthContext);
@@ -35,6 +35,9 @@ function App() {
                                         <Link className="nav-link" to="/orders">Orders</Link>
                                     </li>
                                     <li className="nav-item">
+                                        <Link className="nav-link" to="/order-status">Order Status</Link> 
+                                    </li>
+                                    <li className="nav-item">
                                         <button onClick={handleLogout} className="btn btn-danger">Logout</button>
                                     </li>
                                 </>
@@ -57,6 +60,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/orders" element={<Orders />} />
+                <Route path="/order-status" element={<OrderStatus />} /> 
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
             </Routes>
