@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Home() {
@@ -27,7 +28,7 @@ function Home() {
       <div className="container mt-4">
         <h2 className="mb-3">รายการสินค้ายอดนิยม</h2>
         <div className="row">
-          {[...Array(6)].map((_, index) => (
+          {/* {[...Array(6)].map((_, index) => (
             <div key={index} className="col-md-3 mb-4">
               <div className="card">
                 <div className="card-body text-center">
@@ -38,7 +39,17 @@ function Home() {
                 </div>
               </div>
             </div>
-          ))}
+          ))} */}
+          <div className="col-md-3 mb-4">
+              <div className="card">
+                <div className="card-body text-center">
+                  <h5 className="card-title">PS 5</h5>
+                  <p className="card-text">เครื่องเล่นเกมที่ทรงพลัง...</p>
+                  <p className="fw-bold">$500.00 บาท</p>
+                  <button className="btn btn-primary">ADD TO CART</button>
+                </div>
+              </div>
+            </div>
         </div>
 
         <h2 className="mt-4 mb-3">รายการสินค้าประเภทเสื้อผ้า</h2>
