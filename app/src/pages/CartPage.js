@@ -51,7 +51,9 @@ function CartPage() {
           </tbody>
         </table>
         <h3>รวมทั้งหมด: ${totalPrice.toLocaleString()}</h3>
-        <Link to="/checkout" className="btn btn-danger">Checkout</Link>
+        <Link to="/Orders" className="btn btn-danger">
+          Checkout
+        </Link>
       </div>
     </div>
   );
