@@ -1,12 +1,29 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate ,Link } from "react-router-dom";
 
 function CartPage() {
-  const [cart, setCart] = useState([
-    { id: 1, name: "PS 5", price: 500, quantity: 1 },
-    { id: 2, name: "PS 5", price: 500, quantity: 1 },
-    { id: 3, name: "PS 5", price: 500, quantity: 1 },
-  ]);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const [cart, setCart] = useState(
+  //   [
+  //   { id: 1, name: "PS 5", price: 500, quantity: 1 },
+  //   { id: 2, name: "PS 5", price: 500, quantity: 1 },
+  //   { id: 3, name: "PS 5", price: 500, quantity: 1 },
+  // ]
+);
+
+  useEffect(() => {
+  axios
+  .get("http://localhost:5000/user_cart", { headers: { Authorization: `Bearer ${token}` } })
+  .then((res) => setCart(res.data))
+  // .catch((err) => {alert("Unauthorized"),navigate('/Home');});
+  .catch(error => {
+    alert('เกิดข้อผิดพลาด');
+    navigate('/Login');
+  });
+
+}, []);
 
   const updateQuantity = (id, amount) => {
     setCart((prevCart) =>

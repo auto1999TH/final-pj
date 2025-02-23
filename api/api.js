@@ -40,7 +40,7 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
 
-    db.query("SELECT * FROM Customer WHERE Email = ?", [email], (err, result) => {
+    db.query("SELECT * FROM Customer WHERE Email = ? OR FullName = ?", [email, email], (err, result) => {
         if (err) {
             return res.status(500).json({ message: "Database error", error: err });
         }
@@ -70,6 +70,13 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/products", verifyToken, (req, res) => {
+    db.query("SELECT * FROM Product", (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
+    });
+});
+
+app.get("/", (req, res) => {
     db.query("SELECT * FROM Product", (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results);

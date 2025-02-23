@@ -49,9 +49,9 @@ const Login = () => {
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label fw-bold">ชื่อผู้ใช้ หรือ อีเมล</label>
                                 <input 
-                                    type="email" 
+                                    type="text" 
                                     className="form-control" 
-                                    id="email" 
+                                    // id="email" 
                                     placeholder="กรอกอีเมลของคุณ" 
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 

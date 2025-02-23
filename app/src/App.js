@@ -8,6 +8,7 @@ import Orders from "./pages/Orders";
 import OrderStatus from "./pages/OrderStatus"; 
 import CartPage from "./pages/CartPage"; 
 import { AuthContext } from "./AuthContext";
+// import fs from 'fs';
 
 function App() {
     const { user, logout } = useContext(AuthContext);
@@ -39,7 +40,7 @@ function App() {
                                         <Link className="nav-link" to="/order-status">Order Status</Link> 
                                     </li>
                                     <li className="nav-item">
-                                        <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+                                        <button onClick={handleLogout} className="btn btn-light">ออกจากระบบ</button>
                                     </li>
                                 </>
                             ) : (
