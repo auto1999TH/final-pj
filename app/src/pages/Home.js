@@ -103,44 +103,6 @@ const filteredProducts = selectedCategory === "all"
           </div>
         </div>
       </header>
-<<<<<<< HEAD
-=======
-      <nav className="d-flex justify-content-center mt-3">
-        <Link to="order-status" className="btn btn-light mx-2">โค๊ตส่วนลด + โค๊ตส่งฟรี</Link>
-        <Link to="Orders" className="btn btn-light mx-2">ช็อปปิ้งแฟชั่น</Link>
-        <Link to="/category/appliances" className="btn btn-light mx-2">เครื่องเล่นเกม</Link>
-        <Link to="/category/other" className="btn btn-light mx-2">อื่นๆ</Link>
-      </nav>
-      <div className="container mt-4">
-        {find ?(
-          <>
-        <h2 className="mb-3">รายการสินค้ายอดนิยม</h2>
-        <div className="row">
-          {products.map((item, index) => (
-            <div key={index} className="col-md-3 mb-4">
-              <div className="card">
-                <div className="card-body text-center">
-                  <img src="./imgs/product-img.png" class="card-img-top"/>
-                  <h5 className="card-title">{item.ProductName}</h5>
-                  <p className="card-text">{item.Description}</p>
-                  <p className="fw-bold">${item.Price} บาท</p>
-                  <button className="btn btn-primary">ADD TO CART</button>
-                </div>
-              </div>
-            </div>
-          ))}
-          {/* <div className="col-md-3 mb-4">
-              <div className="card">
-                <div className="card-body text-center">
-                  <h5 className="card-title">{products.ProductID}</h5>
-                  <p className="card-text">{products.Description}</p>
-                  <p className="fw-bold">${products.Price} บาท</p>
-                  <button className="btn btn-primary">ADD TO CART</button>
-                </div>
-              </div>
-            </div> */}
-        </div>
->>>>>>> 50d01810ec63c9e91366a74f952ef9490c011fc6
 
       <nav className="d-flex justify-content-center mt-3">
         <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("game")}>เครื่องเกม</button>
