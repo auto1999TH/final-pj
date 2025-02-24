@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.card {
+  min-height: 500px; /* ปรับตามขนาดที่เหมาะสม */
+}
+
+.card-text {
+  max-height: 80px; /* กำหนดความสูงสูงสุด */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}

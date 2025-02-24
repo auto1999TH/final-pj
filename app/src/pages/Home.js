@@ -4,30 +4,20 @@ import { useNavigate ,Link } from "react-router-dom";
 // import fs from 'fs';
 
 function Home() {
-  const { find, finding } = useState("");
+  const [finding, setFinding] = useState("");
   const navigate = useNavigate();
   const [imageSrc, setImageSrc] = useState(null);
-  const [cart, setcart] = useState([]);
+  // const [cart, setcart] = useState([]);
+  const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);
+  const [searchResults, setSearchResults] = useState(null);
+  const [error, setErrorFind] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const token = localStorage.getItem("token");
-  const [error, setErr_find] = useState("");
   // const ImgPath = './public/imgs/ps.png';
 
-  const find_ = async (e) => {
-    e.preventDefault();
-    try {
-        const response = await fetch("http://localhost:5000/find/"+e, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        });
-        const data = await response.json();
-    } catch (error) {
-        setErr_find("ไม่พบสินค้า");
-    }
-  };
-
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchProducts = async () => {
         try {
             const response = await axios.get("http://localhost:5000/");
             setProducts(response.data);
@@ -53,18 +43,53 @@ function Home() {
         }
     };
 
-    fetchUsers();
+    fetchProducts();
 }, []);
+
+const handleSearch = async (e) => {
+  e.preventDefault();
+  if (!finding) return;
+
+  try {
+    const response = await fetch(`http://localhost:5000/finding/${encodeURIComponent(finding)}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await response.json();
+    
+    setSearchResults(data.length > 0 ? data : []);
+    setErrorFind(data.length > 0 ? "" : "ไม่พบสินค้าที่ค้นหา");
+  } catch (error) {
+    setSearchResults([]);
+    setErrorFind("ไม่พบสินค้า");
+  }
+};
+
+const addToCart = (item) => {
+  setCart((prevCart) => [...prevCart, item]);
+};
+
+const filteredProducts = selectedCategory === "all"
+    ? products
+    : products.filter((item) => item.Type === selectedCategory);
 
   return (
     <div>
       <header style={{ backgroundColor: '#FB5630' }} className="text-white p-3 text-center d-flex justify-content-center align-items-center">
         <h1 className="me-5">ShopTar</h1>
           <div className="d-flex align-items-center">
-            <from onSubmit={find_}>
+            <from onSubmit={handleSearch}>
               <div className="row">
                 <div className="col">
-                  <input type="text" name="finding" placeholder="ค้นหารายการสินค้า" className="form-control" style={{ width: "300px" }} />
+                  <input
+                    type="search"
+                    name="finding"
+                    value={finding}
+                    onChange={(e) => setFinding(e.target.value)}
+                    placeholder="ค้นหารายการสินค้า"
+                    className="form-control"
+                    style={{ width: "300px" }}
+                  />
                 </div>
                 <div className="col">
                   <button type="submit" className="btn btn-light me-3">🔍 ค้นหา</button>
@@ -78,10 +103,12 @@ function Home() {
           </div>
         </div>
       </header>
+<<<<<<< HEAD
+=======
       <nav className="d-flex justify-content-center mt-3">
-        <Link to="order-status" className="btn btn-light mx-2">อิเล็กทรอนิกส์</Link>
-        <Link to="Orders" className="btn btn-light mx-2">เสื้อผ้าแฟชั่น</Link>
-        <Link to="/category/appliances" className="btn btn-light mx-2">เครื่องใช้ไฟฟ้า</Link>
+        <Link to="order-status" className="btn btn-light mx-2">โค๊ตส่วนลด + โค๊ตส่งฟรี</Link>
+        <Link to="Orders" className="btn btn-light mx-2">ช็อปปิ้งแฟชั่น</Link>
+        <Link to="/category/appliances" className="btn btn-light mx-2">เครื่องเล่นเกม</Link>
         <Link to="/category/other" className="btn btn-light mx-2">อื่นๆ</Link>
       </nav>
       <div className="container mt-4">
@@ -113,32 +140,51 @@ function Home() {
               </div>
             </div> */}
         </div>
+>>>>>>> 50d01810ec63c9e91366a74f952ef9490c011fc6
 
-        <h2 className="mt-4 mb-3">รายการสินค้าประเภทเสื้อผ้า</h2>
+      <nav className="d-flex justify-content-center mt-3">
+        <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("game")}>เครื่องเกม</button>
+        <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("shirt")}>เสื้อผ้าแฟชั่น</button>
+        <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("other")}>อื่นๆ</button>
+        <button className="btn btn-dark mx-2" onClick={() => setSelectedCategory("all")}>ทั้งหมด</button>
+      </nav>
+
+
+      <div className="container mt-4">
+        <h2 className="mb-3">สินค้า{selectedCategory === "all" ? "ทั้งหมด" : selectedCategory}</h2>
         <div className="row">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="col-md-3 mb-4">
-              <div className="card">
-                <div className="card-body text-center">
-                  <h5 className="card-title">เสื้อยืดแฟชั่น</h5>
-                  <p className="card-text">เสื้อยืดดีไซน์สวย...</p>
-                  <p className="fw-bold">$20.00 บาท</p>
-                  <button className="btn btn-primary">ADD TO CART</button>
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((item, index) => (
+              <div key={index} className="col-md-3 mb-4">
+                <div className="card" style={{ height: "100%" }}>
+                  <div className="card-body text-center">
+                    <img 
+                      src="./imgs/product-img.png" 
+                      className="card-img-top" 
+                      alt="product" 
+                      style={{ width: "100%", height: "200px", objectFit: "cover" }} 
+                    />
+                    <h5 className="card-title">{item.ProductName}</h5>
+                    <p className="card-text">{item.Description.substring(0, 50)}...</p>
+                    <p className="fw-bold">{item.Price} บาท</p>
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={() => setCart([...cart, item])} // ✅ เพิ่มสินค้าลงตะกร้า
+                    >
+                      ADD TO CART
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-center">ไม่พบสินค้าในหมวดหมู่นี้</p>
+          )}
         </div>
-        </>
-        ) : (
-          <>
-            <h2 className="mb-3">รายการที่ค้นหา {finding}</h2>
-          </>
-        )
-        }
       </div>
     </div>
   );
 }
+
 
 export default Home;

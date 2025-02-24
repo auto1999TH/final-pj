@@ -158,6 +158,16 @@ app.get("/customers", verifyToken, (req, res) => {
     });
 });
 
+app.get("/finding/:find", (req, res) => {
+    const { find } = req.params;
+    var finding = "%"+ find +"%";
+    db.query("SELECT * FROM Product WHERE ProductName like ?",[finding], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
+    });
+});
+
+
 // app.listen(process.env.PORT, () => {
 //     console.log(`Server running on port ${process.env.PORT}`);
 // });

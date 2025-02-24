@@ -1,0 +1,151 @@
+ 
+ <nav className="d-flex justify-content-center mt-3">
+        <Link to="order-status" className="btn btn-light mx-2">เครื่องเกม</Link>
+        <Link to="Orders" className="btn btn-light mx-2">เสื้อผ้าแฟชั่น</Link>
+        {/* <Link to="/category/appliances" className="btn btn-light mx-2">เครื่องใช้ไฟฟ้า</Link> */}
+        <Link to="/category/other" className="btn btn-light mx-2">อื่นๆ</Link>
+      </nav>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+          {/* <div className="col-md-3 mb-4">
+              <div className="card">
+                <div className="card-body text-center">
+                  <h5 className="card-title">{products.ProductID}</h5>
+                  <p className="card-text">{products.Description}</p>
+                  <p className="fw-bold">${products.Price} บาท</p>
+                  <button className="btn btn-primary">ADD TO CART</button>
+                </div>
+              </div>
+            </div> */}
+        </div>
+
+        <h2 className="mt-4 mb-3">รายการสินค้าประเภทเสื้อผ้า</h2>
+        <div className="row">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="col-md-3 mb-4">
+              <div className="card">
+                <div className="card-body text-center">
+                  <h5 className="card-title">เสื้อยืดแฟชั่น</h5>
+                  <p className="card-text">เสื้อยืดดีไซน์สวย...</p>
+                  <p className="fw-bold">$20.00 บาท</p>
+                  <button className="btn btn-primary">ADD TO CART</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        </>
+        ) : (
+          <>
+            <h2 className="mb-3">รายการที่ค้นหา {finding}</h2>
+          </>
+        )
+        }
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+      <div className="container mt-4">
+        {error && <p className="text-danger">{error}</p>}
+
+        {/* เงื่อนไข: ถ้ายังไม่ค้นหา → แสดงสินค้ายอดนิยม */}
+        {searchResults === null ? (
+          <>
+            <h2 className="mb-3">🎮 รายการสินค้ายอดนิยม</h2>
+            <div className="row">
+              {products.filter(item => item.Type === "game").map((item, index) => (
+                <div key={index} className="col-md-3 mb-4">
+                  <div className="card">
+                    <div className="card-body text-center">
+                    <img 
+                        src={
+                          // item.Img instanceof Blob || item.Img instanceof File 
+                          //   ? URL.createObjectURL(item.Img) 
+                          //   : typeof item.Img === "string" && (item.Img.startsWith("data:imgs/") || item.Img.startsWith("http")) 
+                          //   ? item.Img 
+                          //   : typeof item.Img === "string" 
+                          //   ? `data:image/png;base64,${item.Img}`
+                          //   : "./imgs/product-img.png" // ใช้รูป Default ถ้าไม่มีรูป
+                          "./imgs/ps"+(1+index)+".jpg"
+                        } 
+                        className="card-img-top" 
+                        alt="product" 
+                        style={{ height: "250px", objectFit: "cover" }}
+                      />
+                      <h5 className="card-title">{item.ProductName.length > 30 ? item.ProductName.slice(0, 30) + "..." : item.ProductName}</h5>
+                      <p className="card-text">
+                        {item.Description.length > 35 ? item.Description.slice(0, 35) + "..." : item.Description}
+                      </p>
+                      <p className="fw-bold">฿ {item.Price} บาท</p>
+                      <button className="btn btn-primary" onClick={() => addToCart(item)}>ADD TO CART</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <h2 className="mt-4 mb-3">👕 รายการสินค้าประเภทเสื้อผ้าแฟชั่น</h2>
+            <div className="row">
+              {products.filter(item => item.Type === "shirt").map((item, index) => (
+                <div key={index} className="col-md-3 mb-4">
+                  <div className="card">
+                    <div className="card-body d-flex flex-column">
+                      <img src={"./imgs/t-"+(1+index)+".jpg"} className="card-img-top" alt="product" style={{ height: "250px", objectFit: "cover" }} />
+                      <h5 className="card-title">{item.ProductName}</h5>
+                      <p className="card-text">{item.Description.length > 80 ? item.Description.slice(0, 80) + "..." : item.Description}</p>
+                      <p className="fw-bold">{item.Price} บาท</p>
+                      <button className="btn btn-primary mt-auto" onClick={() => addToCart(item)}>ADD TO CART</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+          </>
+        ) : (
+          <>
+            {/* เงื่อนไข: ถ้าค้นหาแล้วและไม่เจอ → แสดงข้อความ */}
+            {searchResults.length === 0 ? (
+              <p className="text-center text-muted">ไม่พบสินค้าที่ตรงกับการค้นหา</p>
+            ) : (
+              <>
+                <h2 className="mb-3">ผลการค้นหา: {finding}</h2>
+                <div className="row">
+                  {searchResults.map((item, index) => (
+                    <div key={index} className="col-md-3 mb-4">
+                      <div className="card">
+                        <div className="card-body text-center">
+                          <img src={"./imgs/t-"+index} className="card-img-top" alt="product" />
+                          <h5 className="card-title">{item.ProductName}</h5>
+                          <p className="card-text">{item.Description}</p>
+                          <p className="fw-bold">{item.Price} บาท</p>
+                          <button className="btn btn-primary">ADD TO CART</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
