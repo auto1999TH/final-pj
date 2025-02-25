@@ -28,10 +28,10 @@ const verifyToken = (req, res, next) => {
 };
 
 app.post("/register", (req, res) => {
-    const { fullName, email, password } = req.body;
+    const { fullName, password, address, phone } = req.body;
     const hashPassword = bcrypt.hashSync(password, 8);
 
-    db.query("INSERT INTO Customer (FullName, Email, Password) VALUES (?, ?, ?)", [fullName, email, hashPassword], (err, result) => {
+    db.query("INSERT INTO Customer (FullName, Email, Password ,Address , Phone) VALUES (?, ?, ?)", [fullName, email, hashPassword, address, phone], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Customer registered successfully" });
     });
