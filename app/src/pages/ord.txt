@@ -1,0 +1,59 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+function OrderPage() {
+  const [orders, setOrders] = useState([]);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/orders", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setOrders(res.data))
+      .catch((err) => alert("Unauthorized"));
+  }, []);
+
+  const totalPrice = orders.reduce((sum, order) => sum + order.Price * order.Quantity, 0);
+
+  return (
+    <div className="container mt-4">
+      <div className="bg-danger text-white p-3 d-flex justify-content-between align-items-center">
+        <h2>ShopTar | ทำการสั่งซื้อ</h2>
+        <div className="text-white">👤 Username</div>
+      </div>
+      <div className="bg-light p-3 my-3">
+        <h4>ที่อยู่ในการจัดส่ง</h4>
+        <p>Username: Address ---------------------------------- <a href="#" className="text-primary">เปลี่ยนที่อยู่</a></p>
+        <p>Tel: ----------------------</p>
+      </div>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>สินค้า</th>
+            <th>ราคาต่อหน่วย</th>
+            <th>จำนวน</th>
+            <th>ราคาสุทธิ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order) => (
+            <tr key={order.OrderID}>
+              <td>{order.ProductName}</td>
+              <td>${order.Price.toLocaleString()}</td>
+              <td>{order.Quantity}</td>
+              <td>${(order.Price * order.Quantity).toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="text-end">
+        <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
+        <button className="btn btn-danger mt-2">Confirm Order</button>
+      </div>
+    </div>
+  );
+}
+
+export default OrderPage;

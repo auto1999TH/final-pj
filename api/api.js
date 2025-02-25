@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const db = require('./config');
 const cors = require("cors");
+const authenticateToken = require("./authenticateToken");
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,11 +29,12 @@ const verifyToken = (req, res, next) => {
 };
 
 app.post("/register", (req, res) => {
-    const { fullName, password, address, phone } = req.body;
+    const { fullName, email, password, address, phone } = req.body;
     const hashPassword = bcrypt.hashSync(password, 8);
 
     db.query("INSERT INTO Customer (FullName, Email, Password ,Address , Phone) VALUES (?, ?, ?)", [fullName, email, hashPassword, address, phone], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
+        const customerID = result.insertId;
         res.json({ message: "Customer registered successfully" });
     });
 });
@@ -45,15 +47,13 @@ app.post("/login", (req, res) => {
             return res.status(500).json({ message: "Database error", error: err });
         }
 
-        // ตรวจสอบว่าพบผู้ใช้หรือไม่
         if (result.length === 0) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
-        const user = result[0];  // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
+        const user = result[0];  
         const hashedPassword = user.Password;
 
-        // ตรวจสอบว่ารหัสผ่านถูกต้องหรือไม่
         if (!hashedPassword || !bcrypt.compareSync(password, hashedPassword)) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
@@ -168,13 +168,150 @@ app.get("/finding/:find", (req, res) => {
 });
 
 // user_cart
-app.get("/user_cart", verifyToken, (req, res) => {
-    db.query("SELECT * FROM list", (err, results) => {
+app.get("/user_cart", authenticateToken, (req, res) => {
+    const customerID = req.user.id;
+
+    const query = `
+        SELECT c.ListID, c.ProductID, p.ProductName, p.Price, c.Quantity
+        FROM List c
+        JOIN Product p ON c.ProductID = p.ProductID
+        WHERE c.CustomerID = ?;
+    `;
+
+    db.query(query, [customerID], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
+
         res.json(results);
     });
 });
 
+// add_cart
+app.post("/add_cart", authenticateToken, (req, res) => {
+    const { ProductID, CustomerID, Quantity } = req.body;
+
+    if (!CustomerID) {
+        return res.status(400).json({ error: "CustomerID is required" });
+    }
+
+    db.query(
+        "SELECT * FROM list WHERE CustomerID = ? AND ProductID = ?",
+        [CustomerID, ProductID],
+        (err, results) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+            if (results.length > 0) {
+                db.query(
+                    "UPDATE list SET Quantity = Quantity + ? WHERE CustomerID = ? AND ProductID = ?",
+                    [Quantity, CustomerID, ProductID],
+                    (err, result) => {
+                        if (err) return res.status(500).json({ error: err.message });
+                        res.json({ success: true, message: "Updated cart item quantity" });
+                    }
+                );
+            } else {
+                db.query(
+                    "INSERT INTO list (CustomerID, ProductID, Quantity) VALUES (?, ?, ?)",
+                    [CustomerID, ProductID, Quantity],
+                    (err, result) => {
+                        if (err) return res.status(500).json({ error: err.message });
+                        res.json({ success: true, message: "Added to cart" });
+                    }
+                );
+            }
+        }
+    );
+});
+
+app.get("/user", (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const email = decoded.email;
+
+        db.query("SELECT CustomerID, FullName, Email, Address, Phone FROM Customer WHERE Email = ? OR FullName = ?", [email,email], (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+            if (result.length === 0) return res.status(404).json({ message: "User not found" });
+
+            res.json(result[0]); 
+        });
+    } catch (error) {
+        return res.status(403).json({ message: "Invalid token" });
+    }
+});
+
+// update_cart
+app.post("/update_cart", authenticateToken, (req, res) => {
+    const { ProductID, Quantity } = req.body;
+    const CustomerID = req.user.id;
+
+    if (!ProductID || !Quantity) {
+        return res.status(400).json({ message: "ข้อมูลไม่ครบถ้วน" });
+    }
+
+    const checkQuery = "SELECT * FROM list WHERE CustomerID = ? AND ProductID = ?";
+    db.query(checkQuery, [CustomerID, ProductID], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (results.length > 0) {
+            // ถ้ามีสินค้าในตะกร้าแล้ว ให้ **อัปเดตจำนวนสินค้า**
+            const updateQuery = "UPDATE list SET Quantity = ? WHERE CustomerID = ? AND ProductID = ?";
+            db.query(updateQuery, [Quantity, CustomerID, ProductID], (err) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ message: "อัปเดตจำนวนสินค้าในตะกร้าสำเร็จ" });
+            });
+        } else {
+            const insertQuery = "INSERT INTO list (CustomerID, ProductID, Quantity) VALUES (?, ?, ?)";
+            db.query(insertQuery, [CustomerID, ProductID, Quantity], (err) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ message: "เพิ่มสินค้าในตะกร้าสำเร็จ" });
+            });
+        }
+    });
+});
+
+// delete_cart
+app.post("/delete_cart", authenticateToken, (req, res) => {
+    const { ProductID } = req.body;
+    const CustomerID = req.user.id; // ดึง CustomerID จาก Token
+  
+    if (!ProductID) {
+      return res.status(400).json({ error: "ProductID is required" });
+    }
+  
+    const sql = "DELETE FROM list WHERE CustomerID = ? AND ProductID = ?";
+    db.query(sql, [CustomerID, ProductID], (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Product not found in list" });
+      }
+      res.json({ message: "Product removed from list successfully" });
+    });
+  });
+
+app.get("/user_info", authenticateToken, (req, res) => {
+    const CustomerID = req.user.id;
+    const sql = "SELECT FullName, Address, Phone FROM Customer WHERE CustomerID = ?";
+    db.query(sql, [CustomerID], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (result.length === 0) return res.status(404).json({ message: "User not found" });
+        res.json(result[0]);
+    });
+});
+
+app.post("/update_address", authenticateToken, (req, res) => {
+    const CustomerID = req.user.id;
+    const { Address } = req.body;
+    if (!Address) return res.status(400).json({ error: "Address is required" });
+
+    const sql = "UPDATE Customer SET Address = ? WHERE CustomerID = ?";
+    db.query(sql, [Address, CustomerID], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Address updated successfully" });
+    });
+});
 
 // app.listen(process.env.PORT, () => {
 //     console.log(`Server running on port ${process.env.PORT}`);

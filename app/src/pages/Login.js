@@ -19,8 +19,9 @@ const Login = () => {
                 body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
+
             if (response.ok) {
-                login(data.token);
+                await login(data.token);
                 navigate("/");
             } else {
                 setError(data.message);
@@ -35,7 +36,7 @@ const Login = () => {
             <div className="row w-100">
                 <div className="col-md-6 text-center text-white d-flex flex-column align-items-center justify-content-center">
                     <div className="mb-3">
-                        <img src="./01.jpg" alt="ShopTar Logo" style={{ width: "100px" }} />
+                        <img src="./logo-A.png" alt="ShopTar Logo" style={{ width: "100px" }} />
                     </div>
                     <h1 className="fw-bold">ShopTar</h1>
                 </div>
@@ -50,9 +51,9 @@ const Login = () => {
                                 <label htmlFor="email" className="form-label fw-bold">ชื่อผู้ใช้ หรือ อีเมล</label>
                                 <input 
                                     type="text" 
-                                    className="form-control" 
+                                    className="form-control"
                                     // id="email" 
-                                    placeholder="กรอกอีเมลของคุณ" 
+                                    placeholder="กรอกอีเมลของคุณ"
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
                                     required 
@@ -75,7 +76,7 @@ const Login = () => {
                         </form>
 
                         <div className="d-grid gap-2 mt-3">
-                            <button className="btn btn-outline-primary fw-bold">สมัครสมาชิก</button>
+                            <a href="/Register" className="btn btn-outline-primary fw-bold">สมัครสมาชิก</a>
                             <button className="btn btn-link text-muted">🔑 ลืมรหัสผ่าน / เปลี่ยนรหัสผ่าน</button>
                         </div>
 

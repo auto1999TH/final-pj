@@ -24,7 +24,7 @@ function Register() {
   return (
     <div className="d-flex align-items-center justify-content-center min-vh-100" style={{ backgroundColor: "#f25022" }}>
       <div className="w-50 d-flex flex-column align-items-center justify-content-center text-white p-4" style={{ backgroundColor: "#f25022" }}>
-        <img src="./01.jpg" alt="ShopTar Logo" style={{ width: "100px" }} />
+        <img src="./logo-A.png" alt="ShopTar Logo" style={{ width: "100px" }} />
         <h2>ShopTar</h2>
       </div>
       <div className="bg-white p-4 rounded shadow-lg d-flex" style={{ maxWidth: "600px", width: "100%" }}>
