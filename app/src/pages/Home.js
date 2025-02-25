@@ -46,32 +46,49 @@ function Home() {
     fetchProducts();
 }, []);
 
-const handleSearch = async (e) => {
-  e.preventDefault();
-  if (!finding) return;
+// const handleSearch = async (e) => {
+//   e.preventDefault();
+//   if (!finding) return;
 
-  try {
-    const response = await fetch(`http://localhost:5000/finding/${encodeURIComponent(finding)}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await response.json();
+//   try {
+//     const response = await fetch(`http://localhost:5000/finding/${encodeURIComponent(finding)}`, {
+//       method: "GET",
+//       headers: { "Content-Type": "application/json" },
+//     });
+//     const data = await response.json();
     
-    setSearchResults(data.length > 0 ? data : []);
-    setErrorFind(data.length > 0 ? "" : "ไม่พบสินค้าที่ค้นหา");
-  } catch (error) {
-    setSearchResults([]);
-    setErrorFind("ไม่พบสินค้า");
+//     setSearchResults(data.length > 0 ? data : []);
+//     setErrorFind(data.length > 0 ? "" : "ไม่พบสินค้าที่ค้นหา");
+//   } catch (error) {
+//     setSearchResults([]);
+//     setErrorFind("ไม่พบสินค้า");
+//   }
+// };
+
+const handleSearch = (e) => {
+  e.preventDefault();
+  if (finding.trim() === "") {
+    setSearchResults(null); // ถ้าค้นหาว่าง ให้รีเซ็ตเป็นค่าเดิม
+    return;
   }
+  const results = products.filter((item) =>
+    item.ProductName.toLowerCase().includes(finding.toLowerCase())
+  );
+  setSearchResults(results);
+  setSelectedCategory(""); // ❌ ปิดหมวดหมู่ ให้แสดงเฉพาะสินค้าที่ค้นหา
 };
+
+// 📌 ถ้าไม่มีการค้นหา → แสดงสินค้าตามหมวดหมู่
+const filteredProducts =
+  searchResults !== null
+    ? searchResults
+    : selectedCategory === "all"
+    ? products
+    : products.filter((item) => item.Type === selectedCategory);
 
 const addToCart = (item) => {
   setCart((prevCart) => [...prevCart, item]);
 };
-
-const filteredProducts = selectedCategory === "all"
-    ? products
-    : products.filter((item) => item.Type === selectedCategory);
 
   return (
     <div>
@@ -113,36 +130,88 @@ const filteredProducts = selectedCategory === "all"
 
 
       <div className="container mt-4">
-        <h2 className="mb-3">สินค้า{selectedCategory === "all" ? "ทั้งหมด" : selectedCategory}</h2>
-        <div className="row">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((item, index) => (
-              <div key={index} className="col-md-3 mb-4">
-                <div className="card" style={{ height: "100%" }}>
-                  <div className="card-body text-center">
+        {error && <p className="text-danger">{error}</p>}
+
+        {/* เงื่อนไข: ถ้ายังไม่ค้นหา → แสดงสินค้ายอดนิยม */}
+        {searchResults === null ? (
+          <>
+            <h2 className="mb-3">🎮 รายการสินค้ายอดนิยม</h2>
+            <div className="row">
+              {products.filter(item => item.Type === "game").map((item, index) => (
+                <div key={index} className="col-md-3 mb-4">
+                  <div className="card">
+                    <div className="card-body text-center">
                     <img 
-                      src="./imgs/product-img.png" 
-                      className="card-img-top" 
-                      alt="product" 
-                      style={{ width: "100%", height: "200px", objectFit: "cover" }} 
-                    />
-                    <h5 className="card-title">{item.ProductName}</h5>
-                    <p className="card-text">{item.Description.substring(0, 50)}...</p>
-                    <p className="fw-bold">{item.Price} บาท</p>
-                    <button 
-                      className="btn btn-primary" 
-                      onClick={() => setCart([...cart, item])} // ✅ เพิ่มสินค้าลงตะกร้า
-                    >
-                      ADD TO CART
-                    </button>
+                        src={
+                          // item.Img instanceof Blob || item.Img instanceof File 
+                          //   ? URL.createObjectURL(item.Img) 
+                          //   : typeof item.Img === "string" && (item.Img.startsWith("data:imgs/") || item.Img.startsWith("http")) 
+                          //   ? item.Img 
+                          //   : typeof item.Img === "string" 
+                          //   ? `data:image/png;base64,${item.Img}`
+                          //   : "./imgs/product-img.png" // ใช้รูป Default ถ้าไม่มีรูป
+                          "./imgs/ps"+(1+index)+".jpg"
+                        } 
+                        className="card-img-top" 
+                        alt="product" 
+                        style={{ height: "250px", objectFit: "cover" }}
+                      />
+                      <h5 className="card-title">{item.ProductName.length > 30 ? item.ProductName.slice(0, 30) + "..." : item.ProductName}</h5>
+                      <p className="card-text">
+                        {item.Description.length > 35 ? item.Description.slice(0, 35) + "..." : item.Description}
+                      </p>
+                      <p className="fw-bold">฿ {item.Price} บาท</p>
+                      <button className="btn btn-primary" onClick={() => addToCart(item)}>ADD TO CART</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center">ไม่พบสินค้าในหมวดหมู่นี้</p>
-          )}
-        </div>
+              ))}
+            </div>
+
+            <h2 className="mt-4 mb-3">👕 รายการสินค้าประเภทเสื้อผ้าแฟชั่น</h2>
+            <div className="row">
+              {products.filter(item => item.Type === "shirt").map((item, index) => (
+                <div key={index} className="col-md-3 mb-4">
+                  <div className="card">
+                    <div className="card-body d-flex flex-column">
+                      <img src={"./imgs/t-"+(1+index)+".jpg"} className="card-img-top" alt="product" style={{ height: "250px", objectFit: "cover" }} />
+                      <h5 className="card-title">{item.ProductName}</h5>
+                      <p className="card-text">{item.Description.length > 80 ? item.Description.slice(0, 80) + "..." : item.Description}</p>
+                      <p className="fw-bold">{item.Price} บาท</p>
+                      <button className="btn btn-primary mt-auto" onClick={() => addToCart(item)}>ADD TO CART</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+          </>
+        ) : (
+          <>
+            {/* เงื่อนไข: ถ้าค้นหาแล้วและไม่เจอ → แสดงข้อความ */}
+            {searchResults.length === 0 ? (
+              <p className="text-center text-muted">ไม่พบสินค้าที่ตรงกับการค้นหา</p>
+            ) : (
+              <>
+                <h2 className="mb-3">ผลการค้นหา: {finding}</h2>
+                <div className="row">
+                  {searchResults.map((item, index) => (
+                    <div key={index} className="col-md-3 mb-4">
+                      <div className="card">
+                        <div className="card-body text-center">
+                          <img src={"./imgs/t-"+index} className="card-img-top" alt="product" />
+                          <h5 className="card-title">{item.ProductName}</h5>
+                          <p className="card-text">{item.Description}</p>
+                          <p className="fw-bold">{item.Price} บาท</p>
+                          <button className="btn btn-primary">ADD TO CART</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

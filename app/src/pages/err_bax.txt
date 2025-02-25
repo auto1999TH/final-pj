@@ -149,3 +149,82 @@
     </div>
   );
 }
+
+
+
+
+return (
+    <div>
+      <header style={{ backgroundColor: '#FB5630' }} className="text-white p-3 text-center d-flex justify-content-center align-items-center">
+        <h1 className="me-5">ShopTar</h1>
+          <div className="d-flex align-items-center">
+            <from onSubmit={handleSearch}>
+              <div className="row">
+                <div className="col">
+                  <input
+                    type="search"
+                    name="finding"
+                    value={finding}
+                    onChange={(e) => setFinding(e.target.value)}
+                    placeholder="ค้นหารายการสินค้า"
+                    className="form-control"
+                    style={{ width: "300px" }}
+                  />
+                </div>
+                <div className="col">
+                  <button type="submit" className="btn btn-light me-3">🔍 ค้นหา</button>
+                </div>
+              </div>
+            </from>
+          <div className="position-relative">
+            <Link to="CartPage" className="btn btn-light">
+              🛒 ตะกร้า ({cart.length})
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <nav className="d-flex justify-content-center mt-3">
+        <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("game")}>เครื่องเกม</button>
+        <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("shirt")}>เสื้อผ้าแฟชั่น</button>
+        <button className="btn btn-light mx-2" onClick={() => setSelectedCategory("other")}>อื่นๆ</button>
+        <button className="btn btn-dark mx-2" onClick={() => setSelectedCategory("all")}>ทั้งหมด</button>
+      </nav>
+
+
+      <div className="container mt-4">
+        <h2 className="mb-3">สินค้า{selectedCategory === "all" ? "ทั้งหมด" : selectedCategory}</h2>
+        <div className="row">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((item, index) => (
+              <div key={index} className="col-md-3 mb-4">
+                <div className="card" style={{ height: "100%" }}>
+                  <div className="card-body text-center">
+                    <img src={"./imgs/"+item.Img+".jpg"}
+                      className="card-img-top" 
+                      alt="product" 
+                      style={{ width: "100%", height: "200px", objectFit: "cover" }} 
+                    />
+                    <h5 className="card-title">{item.ProductName}</h5>
+                    <p className="card-text">{item.Description.substring(0, 50)}...</p>
+                    <p className="fw-bold">{item.Price} บาท</p>
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={() => setCart([...cart, item])} // ✅ เพิ่มสินค้าลงตะกร้า
+                    >
+                      ADD TO CART
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center">ไม่พบสินค้าในหมวดหมู่นี้</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
