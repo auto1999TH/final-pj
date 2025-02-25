@@ -90,6 +90,7 @@ const addToCart = (item) => {
   setCart((prevCart) => [...prevCart, item]);
 };
 
+
   return (
     <div>
       <header style={{ backgroundColor: '#FB5630' }} className="text-white p-3 text-center d-flex justify-content-center align-items-center">

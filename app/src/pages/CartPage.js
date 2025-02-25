@@ -6,11 +6,11 @@ function CartPage() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [cart, setCart] = useState(
-  //   [
-  //   { id: 1, name: "PS 5", price: 500, quantity: 1 },
-  //   { id: 2, name: "PS 5", price: 500, quantity: 1 },
-  //   { id: 3, name: "PS 5", price: 500, quantity: 1 },
-  // ]
+    [
+    { id: 1, name: "PS 5", price: 500, quantity: 1 },
+    { id: 2, name: "PS 5", price: 500, quantity: 1 },
+    { id: 3, name: "PS 5", price: 500, quantity: 1 },
+  ]
 );
 
   useEffect(() => {
@@ -19,11 +19,12 @@ function CartPage() {
   .then((res) => setCart(res.data))
   // .catch((err) => {alert("Unauthorized"),navigate('/Home');});
   .catch(error => {
-    alert('เกิดข้อผิดพลาด');
+    // alert('เกิดข้อผิดพลาด');
     navigate('/Login');
   });
 
-}, []);
+
+}, [token, navigate]);
 
   const updateQuantity = (id, amount) => {
     setCart((prevCart) =>
