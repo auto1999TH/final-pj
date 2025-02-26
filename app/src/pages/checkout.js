@@ -1,11 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function PaymentPage() {
   const [paymentMethod, setPaymentMethod] = useState("QR Promptpay");
-  const totalPrice = 120000;
-  const totalItems = 3;
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
+  useEffect(() => {
+
+    fetch("http://localhost:3000/payment-details", {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}` 
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTotalPrice(data.totalPrice);
+        setTotalItems(data.totalItems);
+      })
+      .catch((error) => {
+        console.error("Error fetching payment details:", error);
+      });
+  }, []);
+
+  const getQRCode = (method) => {
+    switch (method) {
+      case "QR Promptpay":
+        return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarPromptpay";
+      case "Credit Card":
+        return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarCreditCard";
+      case "PayPal":
+        return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarPayPal";
+      case "Bank Transfer":
+        return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarBankTransfer";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div className="container mt-5">
@@ -24,7 +56,7 @@ export default function PaymentPage() {
           {['QR Promptpay', 'Credit Card', 'PayPal', 'Bank Transfer'].map((method) => (
             <button 
               key={method} 
-              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2` }
+              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2`}
               onClick={() => setPaymentMethod(method)}
               style={{ backgroundColor: '#FB5630' }}
             >
@@ -33,11 +65,9 @@ export default function PaymentPage() {
           ))}
         </div>
 
-        {paymentMethod === "QR Promptpay" && (
-          <div className="d-flex justify-content-center mb-4">
-            <img src="/qr-code.png" alt="QR Code" width="150" height="150" />
-          </div>
-        )}
+        <div className="d-flex justify-content-center mb-4">
+          <img src={getQRCode(paymentMethod)} alt="QR Code" />
+        </div>
 
         <div className="d-flex justify-content-between align-items-center">
           <p className="text-secondary mb-0">คำสั่งซื้อทั้งหมด ({totalItems} ชิ้น)</p>

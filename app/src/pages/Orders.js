@@ -42,7 +42,7 @@ function OrderPage() {
 
   return (
     <div className="container mt-4">
-      <div className="bg-danger text-white p-3 d-flex justify-content-between align-items-center">
+      <div className="text-white p-3 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#FB5630' }}>
         <h2>ShopTar | ทำการสั่งซื้อ</h2>
         <div className="text-white">👤 {userInfo.FullName || "Username"}</div>
       </div>
@@ -76,8 +76,8 @@ function OrderPage() {
       </table>
 
       <div className="text-end">
-        <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
-        <Link to="/checkout" className="btn btn-danger">
+        <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span>${totalPrice.toLocaleString()}</span></h4>
+        <Link to="/checkout" className="btn btn-danger" style={{ backgroundColor: '#FB5630' }}>
           Checkout
         </Link>
       </div>

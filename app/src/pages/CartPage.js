@@ -122,6 +122,7 @@ function CartPage() {
                     <button
                       className="btn btn-sm btn-danger"
                       onClick={() => deleteCartItem(item.ProductID)}
+                      style={{ backgroundColor: '#FB5630' }}
                     >
                       🗑️ ลบ
                     </button>
@@ -133,7 +134,7 @@ function CartPage() {
         )}
 
         <h3>ราคาสินค้ารวมทั้งหมด: ${totalPrice?.toLocaleString()}</h3>
-        <Link to="/Orders" className="btn btn-danger">
+        <Link to="/Orders" className="btn btn-danger" style={{ backgroundColor: '#FB5630' }}>
           Checkout
         </Link>
       </div>
