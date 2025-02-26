@@ -1,51 +1,65 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 export default function PaymentPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { FullName, orders, totalPrice, totalItems } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState("QR Promptpay");
-  const totalPrice = 120000;
-  const totalItems = 3;
+
+  useEffect(() => {
+    if (!orders || !totalPrice) {
+      alert("ข้อมูลคำสั่งซื้อไม่ถูกต้อง");
+      navigate("/orders");
+    }
+  }, [orders, totalPrice, navigate]);
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-xl">
-      <div className="flex justify-between items-center border-b pb-4 mb-4">
-        <h1 className="text-xl font-bold text-orange-600">ShopTar | คำการสั่งซื้อ</h1>
-        <span className="text-sm text-gray-500">Username</span>
-      </div>
-      
-      <h2 className="text-lg font-bold text-orange-600">วิธีการชำระเงิน</h2>
-      <p className="text-sm text-orange-500 mb-4">โปรดเลือกวิธีการชำระเงิน</p>
-
-      <div className="flex space-x-2 mb-6">
-        {['QR Promptpay', 'Credit Card', 'PayPal', 'Bank Transfer'].map((method) => (
-          <Button 
-            key={method} 
-            className={`px-4 py-2 text-sm ${paymentMethod === method ? 'bg-orange-600 text-white' : 'bg-gray-300 text-black'}`} 
-            onClick={() => setPaymentMethod(method)}
-          >
-            {method}
-          </Button>
-        ))}
-      </div>
-      
-      {paymentMethod === "QR Promptpay" && (
-        <div className="flex justify-center">
-          <Image src="/qr-code.png" alt="QR Code" width={150} height={150} />
+    <div className="container mt-5">
+      <div className="text-white p-4 rounded shadow-sm" style={{ backgroundColor: '#FB5630' }}>
+        <div className="d-flex justify-content-between align-items-center">
+          <h1 className="h3 font-weight-bold">ShopTar | คำการสั่งซื้อ</h1>
+          <div className="text-white">
+            {FullName ? FullName : "Username"}
+          </div>
         </div>
-      )}
-
-      <div className="mt-6 text-right">
-        <p className="text-gray-500 text-sm">คำสั่งซื้อทั้งหมด ({totalItems} ชิ้น)</p>
-        <p className="text-xl font-bold text-orange-600">${totalPrice.toLocaleString()}</p>
       </div>
 
-      <Button className="w-full mt-4 bg-orange-600 text-white py-3 text-lg font-bold">
-        Complete Payment
-      </Button>
+      <div className="bg-white p-4 my-4 rounded shadow-sm">
+        <h4 className="">วิธีการชำระเงิน</h4>
+        <p className="text-secondary mb-4">โปรดเลือกวิธีการชำระเงิน</p>
+
+        <div className="d-flex justify-content-around mb-4">
+          {['QR Promptpay', 'Credit Card', 'PayPal', 'Bank Transfer'].map((method) => (
+            <button 
+              key={method} 
+              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2` }
+              onClick={() => setPaymentMethod(method)}
+              style={{ backgroundColor: '#FB5630' }}
+            >
+              {method}
+            </button>
+          ))}
+        </div>
+
+        {paymentMethod === "QR Promptpay" && (
+          <div className="d-flex justify-content-center mb-4">
+            <img src="/qr-code.png" alt="QR Code" width="150" height="150" />
+          </div>
+        )}
+
+        <div className="d-flex justify-content-between align-items-center">
+          <p className="text-secondary mb-0">คำสั่งซื้อทั้งหมด ({totalItems} รายการ)</p>
+          <p className="text-xl font-weight-bold text-danger">${totalPrice.toLocaleString()}</p>
+        </div>
+
+        <div className="d-flex justify-content-center mt-4">
+          <Link to="/checkout" className="btn btn-danger btn-lg w-100" style={{ backgroundColor: '#FB5630' }}>
+            Complete Payment
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

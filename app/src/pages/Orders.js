@@ -49,6 +49,7 @@ function OrderPage() {
     // ส่งข้อมูลคำสั่งซื้อและยอดรวมไปยังหน้า Checkout
     navigate('/checkout', {
       state: {
+        FullName: userInfo.FullName,
         orders,
         totalPrice,
         totalItems: orders.length
@@ -95,7 +96,7 @@ function OrderPage() {
 
       {/* ราคาสุทธิและปุ่มไปยังหน้า Checkout */}
       <div className="text-end">
-        <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
+        <h4>คำสั่งซื้อทั้งหมด ({orders.length} รายการ) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
         <button className="btn btn-danger mt-2" onClick={handleCheckout}>
           ไปที่หน้าชำระเงิน
         </button>
