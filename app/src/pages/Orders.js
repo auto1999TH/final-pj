@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate, Link } from "react-router-dom";
 
 function OrderPage() {
   const [orders, setOrders] = useState([]);
@@ -76,7 +77,9 @@ function OrderPage() {
 
       <div className="text-end">
         <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
-        <button className="btn btn-danger mt-2">Confirm Order</button>
+        <Link to="/checkout" className="btn btn-danger">
+          Checkout
+        </Link>
       </div>
 
       {showModal && (

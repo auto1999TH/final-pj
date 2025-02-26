@@ -32,7 +32,7 @@ app.post("/register", (req, res) => {
     const { fullName, email, password, address, phone } = req.body;
     const hashPassword = bcrypt.hashSync(password, 8);
 
-    db.query("INSERT INTO Customer (FullName, Email, Password ,Address , Phone) VALUES (?, ?, ?)", [fullName, email, hashPassword, address, phone], (err, result) => {
+    db.query("INSERT INTO Customer (FullName, Email, Password ,Address , Phone) VALUES (?, ?, ?,?,?)", [fullName, email, hashPassword, address, phone], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         const customerID = result.insertId;
         res.json({ message: "Customer registered successfully" });

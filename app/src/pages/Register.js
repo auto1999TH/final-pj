@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function Register() {
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
@@ -13,7 +14,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/register", { fullName, password, address, phone });
+      await axios.post("http://localhost:5000/register", { fullName, email, password, address, phone });
       alert("Registration successful!");
       navigate("/login");
     } catch (err) {
@@ -32,7 +33,7 @@ function Register() {
           <form onSubmit={handleRegister}>
           <h3 className="text-center mb-4">🔒 สมัครสมาชิก</h3>
             <div className="mb-3">
-              <label htmlFor="fullName" className="form-label">ชื่อผู้ใช้ หรือ อีเมล์</label>
+              <label htmlFor="fullName" className="form-label">ชื่อผู้ใช้</label>
               <input
                 type="text"
                 className="form-control"
@@ -40,6 +41,18 @@ function Register() {
                 placeholder="Enter your full name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">อีเมล์</label>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                placeholder="Enter your full name"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
