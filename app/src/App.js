@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Orders from "./pages/Orders";
 import OrderStatus from "./pages/OrderStatus"; 
 import CartPage from "./pages/CartPage"; 
+import Checkout from "./pages/checkout";
 import { AuthContext } from "./AuthContext";
 // import fs from 'fs';
 
@@ -67,6 +68,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/CartPage" element={<CartPage />} />
                 <Route path="/Orders" element={<Orders />} />
+                <Route path="/Checkout" element={<Checkout />} />
             </Routes>
         </div>
     );

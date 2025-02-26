@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, Link } from "react-router-dom";
 
 function OrderPage() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [userInfo, setUserInfo] = useState({ FullName: "", Address: "", Phone: "" });
   const [newAddress, setNewAddress] = useState("");
@@ -16,11 +17,13 @@ function OrderPage() {
       return;
     }
 
+    // ดึงข้อมูลคำสั่งซื้อ
     axios
       .get("http://localhost:5000/user_cart", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setOrders(res.data))
       .catch((err) => alert("ไม่สามารถโหลดคำสั่งซื้อได้"));
-      
+
+    // ดึงข้อมูลผู้ใช้
     axios
       .get("http://localhost:5000/user_info", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setUserInfo(res.data))
@@ -29,6 +32,7 @@ function OrderPage() {
 
   const totalPrice = orders.reduce((sum, order) => sum + order.Price * order.Quantity, 0);
 
+  // ฟังก์ชันเปลี่ยนที่อยู่
   const updateAddress = () => {
     axios
       .post("http://localhost:5000/update_address", { Address: newAddress }, { headers: { Authorization: `Bearer ${token}` } })
@@ -40,6 +44,18 @@ function OrderPage() {
       .catch((err) => alert("ไม่สามารถอัปเดตที่อยู่ได้"));
   };
 
+  // เพิ่มฟังก์ชันการไปยังหน้าชำระเงิน
+  const handleCheckout = () => {
+    // ส่งข้อมูลคำสั่งซื้อและยอดรวมไปยังหน้า Checkout
+    navigate('/checkout', {
+      state: {
+        orders,
+        totalPrice,
+        totalItems: orders.length
+      }
+    });
+  };
+
   return (
     <div className="container mt-4">
       <div className="bg-danger text-white p-3 d-flex justify-content-between align-items-center">
@@ -47,6 +63,7 @@ function OrderPage() {
         <div className="text-white">👤 {userInfo.FullName || "Username"}</div>
       </div>
 
+      {/* ที่อยู่จัดส่ง */}
       <div className="bg-light p-3 my-3">
         <h4>ที่อยู่ในการจัดส่ง</h4>
         <p><strong>ชื่อ:</strong> {userInfo.FullName}</p>
@@ -54,6 +71,7 @@ function OrderPage() {
         <p><strong>เบอร์โทร:</strong> {userInfo.Phone || "ยังไม่มีเบอร์โทร"}</p>
       </div>
 
+      {/* ตารางแสดงสินค้า */}
       <table className="table">
         <thead>
           <tr>
@@ -75,13 +93,15 @@ function OrderPage() {
         </tbody>
       </table>
 
+      {/* ราคาสุทธิและปุ่มไปยังหน้า Checkout */}
       <div className="text-end">
         <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
-        <Link to="/checkout" className="btn btn-danger">
-          Checkout
-        </Link>
+        <button className="btn btn-danger mt-2" onClick={handleCheckout}>
+          ไปที่หน้าชำระเงิน
+        </button>
       </div>
 
+      {/* Modal เปลี่ยนที่อยู่ */}
       {showModal && (
         <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog">
