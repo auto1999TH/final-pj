@@ -15,23 +15,19 @@ function OrderPage() {
       return;
     }
 
-    // ✅ ดึงข้อมูลคำสั่งซื้อ
     axios
       .get("http://localhost:5000/user_cart", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setOrders(res.data))
       .catch((err) => alert("ไม่สามารถโหลดคำสั่งซื้อได้"));
-
-    // ✅ ดึงข้อมูลผู้ใช้ (FullName, Address, Phone)
+      
     axios
       .get("http://localhost:5000/user_info", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setUserInfo(res.data))
       .catch((err) => console.error("Error fetching user info:", err));
   }, []);
 
-  // ✅ คำนวณราคารวม
   const totalPrice = orders.reduce((sum, order) => sum + order.Price * order.Quantity, 0);
 
-  // ✅ อัปเดตที่อยู่ใหม่
   const updateAddress = () => {
     axios
       .post("http://localhost:5000/update_address", { Address: newAddress }, { headers: { Authorization: `Bearer ${token}` } })
@@ -50,7 +46,6 @@ function OrderPage() {
         <div className="text-white">👤 {userInfo.FullName || "Username"}</div>
       </div>
 
-      {/* ✅ ที่อยู่จัดส่ง */}
       <div className="bg-light p-3 my-3">
         <h4>ที่อยู่ในการจัดส่ง</h4>
         <p><strong>ชื่อ:</strong> {userInfo.FullName}</p>
@@ -58,7 +53,6 @@ function OrderPage() {
         <p><strong>เบอร์โทร:</strong> {userInfo.Phone || "ยังไม่มีเบอร์โทร"}</p>
       </div>
 
-      {/* ✅ ตารางแสดงสินค้า */}
       <table className="table">
         <thead>
           <tr>
@@ -80,13 +74,11 @@ function OrderPage() {
         </tbody>
       </table>
 
-      {/* ✅ แสดงราคาสุทธิและปุ่มสั่งซื้อ */}
       <div className="text-end">
         <h4>คำสั่งซื้อทั้งหมด ({orders.length} ชิ้น) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
         <button className="btn btn-danger mt-2">Confirm Order</button>
       </div>
 
-      {/* ✅ Modal เปลี่ยนที่อยู่ */}
       {showModal && (
         <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog">
