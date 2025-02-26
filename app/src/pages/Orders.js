@@ -32,7 +32,6 @@ function OrderPage() {
 
   const totalPrice = orders.reduce((sum, order) => sum + order.Price * order.Quantity, 0);
 
-  // ฟังก์ชันเปลี่ยนที่อยู่
   const updateAddress = () => {
     axios
       .post("http://localhost:5000/update_address", { Address: newAddress }, { headers: { Authorization: `Bearer ${token}` } })
@@ -44,9 +43,7 @@ function OrderPage() {
       .catch((err) => alert("ไม่สามารถอัปเดตที่อยู่ได้"));
   };
 
-  // เพิ่มฟังก์ชันการไปยังหน้าชำระเงิน
   const handleCheckout = () => {
-    // ส่งข้อมูลคำสั่งซื้อและยอดรวมไปยังหน้า Checkout
     navigate('/checkout', {
       state: {
         FullName: userInfo.FullName,
@@ -59,12 +56,11 @@ function OrderPage() {
 
   return (
     <div className="container mt-4">
-      <div className="bg-danger text-white p-3 d-flex justify-content-between align-items-center">
+      <div className="text-white p-3 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#FB5630' }}>
         <h2>ShopTar | ทำการสั่งซื้อ</h2>
         <div className="text-white">👤 {userInfo.FullName || "Username"}</div>
       </div>
 
-      {/* ที่อยู่จัดส่ง */}
       <div className="bg-light p-3 my-3">
         <h4>ที่อยู่ในการจัดส่ง</h4>
         <p><strong>ชื่อ:</strong> {userInfo.FullName}</p>
@@ -72,7 +68,6 @@ function OrderPage() {
         <p><strong>เบอร์โทร:</strong> {userInfo.Phone || "ยังไม่มีเบอร์โทร"}</p>
       </div>
 
-      {/* ตารางแสดงสินค้า */}
       <table className="table">
         <thead>
           <tr>
@@ -94,7 +89,6 @@ function OrderPage() {
         </tbody>
       </table>
 
-      {/* ราคาสุทธิและปุ่มไปยังหน้า Checkout */}
       <div className="text-end">
         <h4>คำสั่งซื้อทั้งหมด ({orders.length} รายการ) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
         <button className="btn btn-danger mt-2" onClick={handleCheckout}>
@@ -102,7 +96,6 @@ function OrderPage() {
         </button>
       </div>
 
-      {/* Modal เปลี่ยนที่อยู่ */}
       {showModal && (
         <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog">
