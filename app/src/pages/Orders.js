@@ -91,7 +91,7 @@ function OrderPage() {
 
       <div className="text-end">
         <h4>คำสั่งซื้อทั้งหมด ({orders.length} รายการ) <span className="text-danger">${totalPrice.toLocaleString()}</span></h4>
-        <button className="btn btn-danger mt-2" onClick={handleCheckout}>
+        <button className="btn btn-danger mt-2" onClick={handleCheckout} style={{ backgroundColor: '#FB5630' }}>
           ไปที่หน้าชำระเงิน
         </button>
       </div>
