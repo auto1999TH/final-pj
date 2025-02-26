@@ -49,7 +49,8 @@ function OrderPage() {
         FullName: userInfo.FullName,
         orders,
         totalPrice,
-        totalItems: orders.length
+        totalItems: orders.length,
+        ID:userInfo.CustomerID
       }
     });
   };

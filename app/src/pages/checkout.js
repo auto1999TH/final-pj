@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import axios from "axios";
 
 export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { FullName, orders, totalPrice, totalItems } = location.state || {};
+  const { FullName, orders, totalPrice, totalItems, ID } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState("QR Promptpay");
 
   useEffect(() => {
@@ -13,7 +14,42 @@ export default function PaymentPage() {
       alert("ข้อมูลคำสั่งซื้อไม่ถูกต้อง");
       navigate("/orders");
     }
-  }, [orders, totalPrice, navigate]);
+    }, [orders, totalPrice, navigate]);
+
+const getQRCode = (method) => {
+  switch (method) {
+    case "QR Promptpay":
+      return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarPromptpay";
+    case "Credit Card":
+      return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarCreditCard";
+    case "PayPal":
+      return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarPayPal";
+    case "Bank Transfer":
+      return "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=ShopTarBankTransfer";
+    default:
+      return "";
+  }
+};
+
+const handleCompletePayment = async () => {
+  try {
+    const response = await axios.post("http://localhost:5000/user_order", {
+      CustomerID: ID,
+      Payment: paymentMethod,
+      Orders_day: new Date().toISOString(),  
+      Status: "request",
+    });
+
+    if (response.status === 200) {
+      navigate("/orderstatus");
+    } else {
+      alert("เกิดข้อผิดพลาดในการชำระเงิน");
+    }
+  } catch (error) {
+    console.error("Error while submitting order:", error);
+    alert("ไม่สามารถทำการชำระเงินได้ กรุณาลองใหม่");
+  }
+};
 
   return (
     <div className="container mt-5">
@@ -30,11 +66,11 @@ export default function PaymentPage() {
         <h4 className="">วิธีการชำระเงิน</h4>
         <p className="text-secondary mb-4">โปรดเลือกวิธีการชำระเงิน</p>
 
-        <div className="d-flex justify-content-around mb-4">
+        <div className="d-flex justify-content-start mb-4">
           {['QR Promptpay', 'Credit Card', 'PayPal', 'Bank Transfer'].map((method) => (
             <button 
               key={method} 
-              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2` }
+              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2 me-2`}
               onClick={() => setPaymentMethod(method)}
               style={{ backgroundColor: '#FB5630' }}
             >
@@ -42,12 +78,9 @@ export default function PaymentPage() {
             </button>
           ))}
         </div>
-
-        {paymentMethod === "QR Promptpay" && (
-          <div className="d-flex justify-content-center mb-4">
-            <img src="/qr-code.png" alt="QR Code" width="150" height="150" />
-          </div>
-        )}
+        <div className="d-flex justify-content-start mb-4">
+          <img src={getQRCode(paymentMethod)} alt="QR Code" />
+        </div>
 
         <div className="d-flex justify-content-between align-items-center">
           <p className="text-secondary mb-0">คำสั่งซื้อทั้งหมด ({totalItems} รายการ)</p>
@@ -55,9 +88,13 @@ export default function PaymentPage() {
         </div>
 
         <div className="d-flex justify-content-center mt-4">
-          <Link to="/checkout" className="btn btn-danger btn-lg w-100" style={{ backgroundColor: '#FB5630' }}>
+          <button
+            className="btn btn-danger btn-lg w-100"
+            style={{ backgroundColor: '#FB5630' }}
+            onClick={handleCompletePayment} // Call handleCompletePayment when button is clicked
+          >
             Complete Payment
-          </Link>
+          </button>
         </div>
       </div>
     </div>

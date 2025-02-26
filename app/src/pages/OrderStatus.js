@@ -12,7 +12,7 @@ const OrderStatus = () => {
   return (
     <div className="container py-5">
       <div className="card shadow-lg">
-        <div className="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+        <div className="card-header text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: '#FB5630' }}>
           <h1 className="h5 mb-0">
             <span className="me-2">🛍️</span>ShopTar | สถานะคำสั่งซื้อ
           </h1>
@@ -20,7 +20,7 @@ const OrderStatus = () => {
         </div>
 
         <div className="card-body">
-          <h2 className="h5 text-danger mb-3">ข้อมูลสถานะสินค้า</h2>
+          <h2 className="h5 mb-3">ข้อมูลสถานะสินค้า</h2>
           <div className="list-group">
             {orders.map((order, index) => (
               <div key={index} className="list-group-item d-flex justify-content-between align-items-center">
@@ -31,7 +31,7 @@ const OrderStatus = () => {
                     <p className="text-muted small">คำสั่งซื้อทั้งหมด ({order.quantity} ชิ้น)</p>
                   </div>
                 </div>
-                <p className="text-danger fw-bold mb-0">${order.price.toLocaleString()}</p>
+                <p className="fw-bold mb-0">${order.price.toLocaleString()}</p>
                 <p className="mb-0">{order.status}</p>
               </div>
             ))}

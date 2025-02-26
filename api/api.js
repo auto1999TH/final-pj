@@ -293,7 +293,7 @@ app.post("/delete_cart", authenticateToken, (req, res) => {
 
 app.get("/user_info", authenticateToken, (req, res) => {
     const CustomerID = req.user.id;
-    const sql = "SELECT FullName, Address, Phone FROM Customer WHERE CustomerID = ?";
+    const sql = "SELECT * FROM Customer WHERE CustomerID = ?";
     db.query(sql, [CustomerID], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         if (result.length === 0) return res.status(404).json({ message: "User not found" });
@@ -312,6 +312,31 @@ app.post("/update_address", authenticateToken, (req, res) => {
         res.json({ message: "Address updated successfully" });
     });
 });
+
+app.post("/user_order",authenticateToken, (req, res) => {
+    const { CustomerID, Payment, Orders_day, Status } = req.body;
+  
+    if (!CustomerID || !Payment || !Orders_day || !Status) {
+      return res.status(400).json({ message: "ข้อมูลไม่ครบถ้วน" });
+    }
+  
+    const query = `
+      INSERT INTO Oder (CustomerID, Payment, Orders_day, Status)
+      VALUES (?, ?, ?, ?)
+    `;
+  
+    db.query(query, [CustomerID, Payment, Orders_day, Status], (err, result) => {
+      if (err) {
+        console.error("Error inserting order:", err);
+        return res.status(500).json({ message: "เกิดข้อผิดพลาดในการบันทึกคำสั่งซื้อ" });
+      }
+      
+      return res.status(200).json({
+        message: "คำสั่งซื้อถูกบันทึกสำเร็จ",
+        orderID: result.insertId,
+      });
+    });
+  });
 
 // app.listen(process.env.PORT, () => {
 //     console.log(`Server running on port ${process.env.PORT}`);
