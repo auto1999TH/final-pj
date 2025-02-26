@@ -313,27 +313,31 @@ app.post("/update_address", authenticateToken, (req, res) => {
     });
 });
 
-app.post("/user_order",authenticateToken, (req, res) => {
-    const { CustomerID, Payment, Orders_day, Status } = req.body;
+app.post("/user_order", authenticateToken, (req, res) => {
+    const { Payment, Orders_day, Status } = req.body;
   
-    if (!CustomerID || !Payment || !Orders_day || !Status) {
+    const CustomerID = req.user.id;
+  
+    if (!Payment || !Orders_day || !Status) {
       return res.status(400).json({ message: "ข้อมูลไม่ครบถ้วน" });
     }
+    const formattedOrdersDay = new Date(Orders_day);
   
     const query = `
       INSERT INTO Oder (CustomerID, Payment, Orders_day, Status)
       VALUES (?, ?, ?, ?)
     `;
   
-    db.query(query, [CustomerID, Payment, Orders_day, Status], (err, result) => {
-      if (err) {
-        console.error("Error inserting order:", err);
-        return res.status(500).json({ message: "เกิดข้อผิดพลาดในการบันทึกคำสั่งซื้อ" });
-      }
+    db.query(query, [CustomerID, Payment, formattedOrdersDay, Status], (err, result) => {
+        if (err) {
+          console.error("Error inserting order:", err);
+          return res.status(500).json({ message: "เกิดข้อผิดพลาดในการบันทึกคำสั่งซื้อ" });
+        }
       
+      // Successfully inserted order
       return res.status(200).json({
         message: "คำสั่งซื้อถูกบันทึกสำเร็จ",
-        orderID: result.insertId,
+        orderID: result.insertId, // Optionally return the inserted order ID
       });
     });
   });

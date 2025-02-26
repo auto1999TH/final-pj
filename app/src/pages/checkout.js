@@ -6,7 +6,8 @@ import axios from "axios";
 export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { FullName, orders, totalPrice, totalItems, ID } = location.state || {};
+  const token = localStorage.getItem("token");
+  const { FullName, orders, totalPrice, totalItems } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState("QR Promptpay");
 
   useEffect(() => {
@@ -33,15 +34,19 @@ const getQRCode = (method) => {
 
 const handleCompletePayment = async () => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.post("http://localhost:5000/user_order", {
-      CustomerID: ID,
       Payment: paymentMethod,
       Orders_day: new Date().toISOString(),  
       Status: "request",
-    });
+    },{
+      headers: {
+        Authorization: `Bearer ${token}`, // ส่ง token ใน header
+      }
+  });
 
     if (response.status === 200) {
-      navigate("/orderstatus");
+      navigate("/order-status");
     } else {
       alert("เกิดข้อผิดพลาดในการชำระเงิน");
     }

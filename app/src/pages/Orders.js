@@ -12,18 +12,11 @@ function OrderPage() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) {
-      alert("กรุณาเข้าสู่ระบบ");
-      return;
-    }
-
-    // ดึงข้อมูลคำสั่งซื้อ
     axios
       .get("http://localhost:5000/user_cart", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setOrders(res.data))
       .catch((err) => alert("ไม่สามารถโหลดคำสั่งซื้อได้"));
 
-    // ดึงข้อมูลผู้ใช้
     axios
       .get("http://localhost:5000/user_info", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setUserInfo(res.data))
@@ -49,8 +42,7 @@ function OrderPage() {
         FullName: userInfo.FullName,
         orders,
         totalPrice,
-        totalItems: orders.length,
-        ID:userInfo.CustomerID
+        totalItems: orders.length
       }
     });
   };
