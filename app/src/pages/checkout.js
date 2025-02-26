@@ -8,7 +8,6 @@ export default function PaymentPage() {
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
-
     fetch("http://localhost:3000/payment-details", {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}` 
@@ -52,11 +51,11 @@ export default function PaymentPage() {
         <h4 className="">วิธีการชำระเงิน</h4>
         <p className="text-secondary mb-4">โปรดเลือกวิธีการชำระเงิน</p>
 
-        <div className="d-flex justify-content-around mb-4">
+        <div className="d-flex justify-content-start mb-4">
           {['QR Promptpay', 'Credit Card', 'PayPal', 'Bank Transfer'].map((method) => (
             <button 
               key={method} 
-              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2`}
+              className={`btn ${paymentMethod === method ? 'btn-danger text-white' : 'btn-outline-danger text-dark'} px-4 py-2 me-2`}
               onClick={() => setPaymentMethod(method)}
               style={{ backgroundColor: '#FB5630' }}
             >
@@ -65,7 +64,7 @@ export default function PaymentPage() {
           ))}
         </div>
 
-        <div className="d-flex justify-content-center mb-4">
+        <div className="d-flex justify-content-start mb-4">
           <img src={getQRCode(paymentMethod)} alt="QR Code" />
         </div>
 
